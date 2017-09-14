@@ -54,3 +54,7 @@ include_directories(include)
 add_executable(playground src/playground.cpp)
 target_compile_features(playground PRIVATE cxx_generic_lambdas)
 
+add_executable(tryit src/main.cpp)
+target_compile_features(tryit PRIVATE cxx_lambdas)
+target_compile_definitions(tryit PRIVATE WATCHDOG_DEBUG=true)
+

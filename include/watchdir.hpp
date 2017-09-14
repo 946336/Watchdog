@@ -4,116 +4,71 @@
 #include <unistd.h>
 
 #include <string>
+#include <functional>
+#include <map>
+
+#include <thread>
+
+#include "flags.hpp"
 
 namespace Watch {
 
+    // For more information, see `man inotify`
     using Event = inotify_event;
 
-    namespace Events {
-        // Use these to describe the types of events you wish to watch for
-        // See `inotify_add_watch()`
-        enum class Flags : std::size_t {
-            All = IN_ALL_EVENTS,
-            Access = IN_ACCESS,
-            Attributes = IN_ATTRIB,
-
-            Close_Write = IN_CLOSE_WRITE,
-            Close_Nowrite = IN_CLOSE_NOWRITE,
-            Close = IN_CLOSE, // Both of the above
-
-            Create = IN_CREATE,
-            Delete = IN_DELETE_SELF,
-            Delete_Sub = IN_DELETE,
-            Modify = IN_MODIFY,
-            Move = IN_MOVE_SELF,
-
-            Moved_From = IN_MOVED_FROM,
-            Moved_To = IN_MOVED_TO,
-            Moved = IN_MOVE, // Both of the above
-
-            Open = IN_OPEN,
-
-        };
-
-        // Check for these in the `mask` field set by `read()`
-        enum class Reply : std::size_t {
-            // Watch was removed for one reason or another
-            Ignored = IN_IGNORED,
-            // Subject of event is a directory
-            Is_Directory = IN_ISDIR,
-            // Event queue overflowed (and wd is -1)
-            Overflow = IN_Q_OVERFLOW,
-            // Filesystem was unmounted
-            Unmounted = IN_UNMOUNT,
-        };
-    } // namespace Events
-
-    namespace Watch {
-        // Use these to further refine the behavior of the watch created by
-        // `inotify_add_watch()`
-        enum class Flags : std::size_t {
-            // Don't follow symbolic links
-            No_Follow = IN_DONT_FOLLOW,
-            // Stop following things that have been moved out of the directory
-            Unlink = IN_EXCL_UNLINK,
-            // Append to kernel watch list for this directory instead of
-            // replacing
-            Add = IN_MASK_ADD,
-            // Remove directory from watch list after a single event
-            Once = IN_ONESHOT,
-            // Watch only if named filesystem object is a directory
-            Directory_Only = IN_ONLYDIR,
-        };
-    } // namespace Watch
+    // Callbacks attached to Events are fired and given the Event as an
+    // argument.
+    using Callback = std::function<void(Event*)>;
 
     // For more information, see man or info pages for inotify
-    class Directory {
+    class Dog {
         public:
-            Directory(const std::string &dirname,
-                      const std::size_t max_events = 1024,
-                      const std::size_t max_len_name = 255);
-            Directory(const Directory &src);
-            ~Directory();
+            // max_events and max_len_name used to determine internal buffer
+            // length
+            Dog(const std::string &dirname,
+                const std::size_t max_events = 1024,
+                const std::size_t max_len_name = 255);
+            Dog(const Dog &src);
+            ~Dog();
+
+            void set_callback(Callback cb, FlagBearer flags);
 
             // File in the directory was read (ie read, execve)
-            void set_on_access_handler();
+            void set_on_access_handler(Callback cb);
 
             // Metadata changed (ie permissions, etc)
-            void set_on_attrib_handler();
+            void set_on_attrib_handler(Callback cb);
 
             // When a file in the directory opened for writing is closed
-            void set_on_close_write_handler();
+            void set_on_close_write_handler(Callback bc);
 
             // When a file or directory opened not for writing is closed
-            void set_on_close_nowrite_handler();
+            void set_on_close_nowrite_handler(Callback cb);
 
             // On creation of a file or directory
-            void set_on_create_handler();
+            void set_on_create_handler(Callback cb);
 
             // On deletion of a file or directory inside the watched directory
-            void set_on_delete_sub_handler();
+            void set_on_delete_sub_handler(Callback cb);
 
             // On deletion of the directory itself
-            void set_on_delete_handler();
+            void set_on_delete_handler(Callback cb);
 
             // On modification of the directory or its contents
-            void set_on_modify_handler();
+            void set_on_modify_handler(Callback cb);
 
             // When the watched directory is moved
-            void set_on_move_handler();
+            void set_on_move_handler(Callback cb);
 
             // When subdirectories are moved
-            void set_on_moved_from_handler();
-            void set_on_moved_to_handler();
+            void set_on_moved_from_handler(Callback cb);
+            void set_on_moved_to_handler(Callback cb);
 
             // Don't allow assignment
-            Directory& operator=(const Directory &src) = delete;
+            Dog& operator=(const Dog &src) = delete;
 
-        protected:
-
-    };
-
-    class File {
+        private:
+            std::map<FlagBearer, Callback> _callbacks;
 
     };
 
