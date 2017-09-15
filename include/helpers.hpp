@@ -72,10 +72,11 @@ namespace Watch {
 
     std::string join_paths(const std::string &lhs, const std::string &rhs)
     {
-        if (rhs.empty()) return lhs;
         if (lhs.empty()) return rhs;
+        if (rhs.empty()) return lhs;
 
         std::string joined = lhs;
+
         if (lhs.back() != path_sep) {
             joined += path_sep;
         }

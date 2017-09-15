@@ -79,7 +79,7 @@ Optional template parameters (in order):
 
 * Constructor: Requires a path to watch and an optional list
   (`std::vector<std::string>`) of paths to ignore. These must match exactly,
-  as regular expressions and globbing are not permitted.
+  as regular expressions, globbing, and partial matches are not supported.
 * `add_callback`: Registers a `Callback` to be called whenever an `Event` with
   a matching flag is detected by Watchdog.
 * `listen`: `Sentry` enters a neverending loop, waiting for `Event`s.
