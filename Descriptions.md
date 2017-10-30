@@ -37,8 +37,8 @@ directives and definitions:
   Watchdog should be prepared to buffer. Defaults to 1024.
 * `WATCHDOG_MAX_LEN_NAME`: This integer determines the maximum filename length
   that Watchdog should be prepared to handle. Defaults to 255.
-* `WATCHDO_THREADSAFE`: This causes Watchdog to protect its shared memory from
-  data races. Defaults to `false`.
+* `WATCHDOG_THREADSAFE`: This causes Watchdog to protect its shared memory
+  from data races. Defaults to `false`.
 
 ## Flags
 
@@ -57,7 +57,7 @@ events but that are still otherwise useful.
 Required template parameters:
 
 * `Recurse RECURSE`: Used to determine if Watchdog should attempt to watch
-  recursively. It is _not_ and error to recursively watch a file, though it is
+  recursively. It is _not_ an error to recursively watch a file, though it is
   somewhat pointless.
 
 Optional template parameters (in order):
